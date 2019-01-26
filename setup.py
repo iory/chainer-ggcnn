@@ -8,6 +8,7 @@ setup_requires = []
 install_requires = [
     'chainer>=5.1.0',
     'chainercv',
+    'six',
 ]
 
 setup(

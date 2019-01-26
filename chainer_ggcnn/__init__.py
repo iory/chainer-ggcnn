@@ -6,3 +6,4 @@ __version__ = pkg_resources.get_distribution(
 
 
 import chainer_ggcnn.links  # NOQA
+import chainer_ggcnn.utils  # NOQA
