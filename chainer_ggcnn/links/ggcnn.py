@@ -8,7 +8,7 @@ class GGCNN(chainer.Chain):
     def __init__(self):
         super(GGCNN, self).__init__()
         with self.init_scope():
-            self.conv1 = L.Convolution2D(3, 32, 9, 3, 3)  # (32, 100, 100)
+            self.conv1 = L.Convolution2D(1, 32, 9, 3, 3)  # (32, 100, 100)
             self.conv2 = L.Convolution2D(32, 16, 5, 2, 2)  # (16, 50, 50)
             self.conv3 = L.Convolution2D(16, 8, 3, 2, 1)  # (8, 25, 25)
 
