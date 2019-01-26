@@ -19,13 +19,13 @@ class GGCNN(chainer.Chain):
             self.deconv3 = L.Deconvolution2D(16, 32, 9, 3, pad=3,
                                              outsize=(300, 300))
 
-            self.conv_pos = L.Convolution2D(32, 1, 2, dilate=0)
+            self.conv_pos = L.Convolution2D(32, 1, 2, pad=1)
 
-            self.conv_sin = L.Convolution2D(32, 1, 2, dilate=0)
+            self.conv_sin = L.Convolution2D(32, 1, 2, pad=1)
 
-            self.conv_cos = L.Convolution2D(32, 1, 2, dilate=0)
+            self.conv_cos = L.Convolution2D(32, 1, 2, pad=1)
 
-            self.conv_width = L.Convolution2D(32, 1, 2, dilate=0)
+            self.conv_width = L.Convolution2D(32, 1, 2, pad=1)
 
     def forward(self, x):
         """
@@ -41,10 +41,10 @@ class GGCNN(chainer.Chain):
         h = F.relu(self.deconv2(h))
         h = F.relu(self.deconv3(h))
 
-        pos = self.conv_pos(h)
-        sin = self.conv_sin(h)
-        cos = self.conv_cos(h)
-        width = self.conv_width(h)
+        pos = self.conv_pos(h)[:, :, :300, :300]
+        sin = self.conv_sin(h)[:, :, :300, :300]
+        cos = self.conv_cos(h)[:, :, :300, :300]
+        width = self.conv_width(h)[:, :, :300, :300]
 
         return pos, sin, cos, width
 
@@ -52,7 +52,7 @@ class GGCNN(chainer.Chain):
 if __name__ == '__main__':
     import numpy as np
 
-    img = np.ones((1, 1, 300, 300), 'f')
+    img = np.ones((4, 1, 300, 300), 'f')
     model = GGCNN()
     pos, sin, cos, width = model(img)
     print(pos.shape, sin.shape, cos.shape, width.shape)
