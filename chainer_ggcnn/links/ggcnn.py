@@ -5,8 +5,9 @@ import chainer.functions as F
 
 class GGCNN(chainer.Chain):
 
-    def __init__(self):
+    def __init__(self, use_bn=False):
         super(GGCNN, self).__init__()
+        self.use_bn = use_bn
         with self.init_scope():
             self.conv1 = L.Convolution2D(1, 32, 9, 3, 3)  # (32, 100, 100)
             self.conv2 = L.Convolution2D(32, 16, 5, 2, 2)  # (16, 50, 50)
@@ -27,24 +28,47 @@ class GGCNN(chainer.Chain):
 
             self.conv_width = L.Convolution2D(32, 1, 2, pad=1)
 
+            if use_bn:
+                self.bn1 = L.BatchNormalization(32)
+                self.bn2 = L.BatchNormalization(16)
+                self.bn3 = L.BatchNormalization(8)
+
+                self.dbn1 = L.BatchNormalization(8)
+                self.dbn2 = L.BatchNormalization(16)
+                self.dbn3 = L.BatchNormalization(32)
+
     def forward(self, x):
         """
 
         Args:
 
         """
-        h = F.relu(self.conv1(x))
-        h = F.relu(self.conv2(h))
-        encoded = F.relu(self.conv3(h))
+        if self.use_bn:
+            h = F.relu(self.bn1(self.conv1(x)))
+            h = F.relu(self.bn2(self.conv2(h)))
+            encoded = F.relu(self.bn3(self.conv3(h)))
 
-        h = F.relu(self.deconv1(encoded))
-        h = F.relu(self.deconv2(h))
-        h = F.relu(self.deconv3(h))
+            h = F.relu(self.dbn1(self.deconv1(encoded)))
+            h = F.relu(self.dbn2(self.deconv2(h)))
+            h = F.relu(self.dbn3(self.deconv3(h)))
 
-        pos = self.conv_pos(h)[:, :, :300, :300]
-        sin = self.conv_sin(h)[:, :, :300, :300]
-        cos = self.conv_cos(h)[:, :, :300, :300]
-        width = self.conv_width(h)[:, :, :300, :300]
+            pos = self.conv_pos(h)[:, :, :300, :300]
+            sin = self.conv_sin(h)[:, :, :300, :300]
+            cos = self.conv_cos(h)[:, :, :300, :300]
+            width = self.conv_width(h)[:, :, :300, :300]
+        else:
+            h = F.relu(self.conv1(x))
+            h = F.relu(self.conv2(h))
+            encoded = F.relu(self.conv3(h))
+
+            h = F.relu(self.deconv1(encoded))
+            h = F.relu(self.deconv2(h))
+            h = F.relu(self.deconv3(h))
+
+            pos = self.conv_pos(h)[:, :, :300, :300]
+            sin = self.conv_sin(h)[:, :, :300, :300]
+            cos = self.conv_cos(h)[:, :, :300, :300]
+            width = self.conv_width(h)[:, :, :300, :300]
 
         return pos, sin, cos, width
 
