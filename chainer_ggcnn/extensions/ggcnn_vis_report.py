@@ -42,6 +42,7 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
                 six.moves.zip(
                     depths, pred_poses, pred_sines, pred_coses, pred_widthes)):
             depth = depth.squeeze()
+            pred_pos = pred_pos.squeeze()
             pred_sin = pred_sin.squeeze()
             pred_cos = pred_cos.squeeze()
             pred_width = pred_width.squeeze()
