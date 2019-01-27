@@ -46,7 +46,7 @@ class GGCNN(chainer.Chain):
             C, H, W = img.shape
             with chainer.using_config('train', False), \
                     chainer.function.no_backprop_mode():
-                x = chainer.Variable(self.xp.asarray(img[np.newaxis]))
+                x = chainer.Variable(self.xp.asarray(img[self.xp.newaxis]))
                 pred_pos, pred_sin, pred_cos, pred_width = self.__call__(x)
             pred_pos = pred_pos[0].data
             pred_sin = pred_sin[0].data
