@@ -50,7 +50,6 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
             pred_sin = pred_sin.squeeze()
             pred_cos = pred_cos.squeeze()
             pred_width = pred_width.squeeze()
-            rgb = rgb.transpose(1, 2, 0)
             rgb = np.array(rgb.transpose(1, 2, 0), 'i')
             grasp_angle_img = np.arctan2(pred_sin, pred_cos) / 2.0
             plt.clf()
