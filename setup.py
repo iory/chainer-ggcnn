@@ -11,6 +11,7 @@ install_requires = [
     'six',
     'matplotlib',
     'scikit-image',
+    'tqdm',
 ]
 
 setup(
