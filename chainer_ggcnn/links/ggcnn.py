@@ -37,6 +37,31 @@ class GGCNN(chainer.Chain):
                 self.dbn2 = L.BatchNormalization(16)
                 self.dbn3 = L.BatchNormalization(32)
 
+    def predict(self, imgs):
+        pred_poses = []
+        pred_sines = []
+        pred_coses = []
+        pred_widthes = []
+        for img in imgs:
+            C, H, W = img.shape
+            with chainer.using_config('train', False), \
+                    chainer.function.no_backprop_mode():
+                x = chainer.Variable(self.xp.asarray(img[np.newaxis]))
+                pred_pos, pred_sin, pred_cos, pred_width = self.__call__(x)
+            pred_pos = pred_pos[0].data
+            pred_sin = pred_sin[0].data
+            pred_cos = pred_cos[0].data
+            pred_width = pred_width[0].data
+            pred_pos = chainer.backends.cuda.to_cpu(pred_pos)
+            pred_sin = chainer.backends.cuda.to_cpu(pred_sin)
+            pred_cos = chainer.backends.cuda.to_cpu(pred_cos)
+            pred_width = chainer.backends.cuda.to_cpu(pred_width)
+            pred_poses.append(pred_pos)
+            pred_sines.append(pred_sin)
+            pred_coses.append(pred_cos)
+            pred_widthes.append(pred_width)
+        return pred_poses, pred_sines, pred_coses, pred_widthes
+
     def forward(self, x):
         """
 
