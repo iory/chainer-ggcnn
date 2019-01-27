@@ -57,7 +57,7 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
             grasp_angle_img = np.arctan2(pred_sin, pred_cos) / 2.0
             grasp_position_img = gaussian(
                 pred_pos, 5.0, preserve_range=True)
-            grasp_width_img = gaussian(pred_width, 1.0,
+            grasp_width_img = gaussian(pred_width * 150.0, 1.0,
                                        preserve_range=True)
             gs = detect_grasps(grasp_position_img,
                                grasp_angle_img,
