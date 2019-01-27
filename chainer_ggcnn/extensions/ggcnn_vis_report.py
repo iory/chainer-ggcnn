@@ -33,7 +33,8 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
         in_values, out_values, rest_values = apply_to_iterator(
             target.predict, it)
 
-        depths, _, _, _, _, bbs, rgbs = in_values
+        depths, = in_values
+        _, _, _, _, bbs, rgbs = rest_values
 
         pred_poses, pred_sines, pred_coses, pred_widthes, = out_values
 
