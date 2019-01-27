@@ -9,6 +9,7 @@ install_requires = [
     'chainer>=5.1.0',
     'chainercv',
     'six',
+    'matplotlib'
 ]
 
 setup(
