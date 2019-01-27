@@ -28,7 +28,7 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
 
     def __call__(self, trainer):
         iterator = self._iterators['main']
-        target = self._targets
+        target = self._targets['main']
 
         if hasattr(iterator, 'reset'):
             iterator.reset()
