@@ -9,6 +9,10 @@ class GGCNNTrainChain(chainer.Chain):
         with self.init_scope():
             self.predictor = predictor
 
+    def predict(self, imgs):
+        pred_pos, pred_sin, pred_cos, pred_width = self.predictor(imgs)
+        return pred_pos, pred_sin, pred_cos, pred_width
+
     def forward(self,
                 imgs,
                 positions,
