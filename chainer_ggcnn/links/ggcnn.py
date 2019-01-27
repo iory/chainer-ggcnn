@@ -39,8 +39,7 @@ class GGCNN(chainer.Chain):
 
     def predict(self, imgs):
         pred_poses = []
-        pred_sines = []
-        pred_coses = []
+        pred_angles = []
         pred_widthes = []
         for img in imgs:
             C, H, W = img.shape
@@ -55,12 +54,12 @@ class GGCNN(chainer.Chain):
             pred_pos = chainer.backends.cuda.to_cpu(pred_pos)
             pred_sin = chainer.backends.cuda.to_cpu(pred_sin)
             pred_cos = chainer.backends.cuda.to_cpu(pred_cos)
-            pred_width = chainer.backends.cuda.to_cpu(pred_width)
+            pred_angle = np.arctan2(pred_sin, pred_cos) / 2.0
+            pred_width = chainer.backends.cuda.to_cpu(pred_width) * 150.0
             pred_poses.append(pred_pos)
-            pred_sines.append(pred_sin)
-            pred_coses.append(pred_cos)
+            pred_angles.append(pred_angle)
             pred_widthes.append(pred_width)
-        return pred_poses, pred_sines, pred_coses, pred_widthes
+        return pred_poses, pred_angles, pred_widthes
 
     def forward(self, x):
         """
