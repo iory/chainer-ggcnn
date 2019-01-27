@@ -4,7 +4,6 @@ import tqdm
 import chainer
 from chainercv.utils import apply_to_iterator
 import six
-import numpy as np
 from skimage.filters import gaussian
 
 from chainer_ggcnn.utils import BoundingBoxes
@@ -13,8 +12,7 @@ from chainer_ggcnn.utils import detect_grasps
 
 def evaluate_iou_matches(
         pred_poses,
-        pred_sines,
-        pred_coses,
+        pred_angles,
         pred_widthes,
         gt_bbses,
         no_grasps=1,
@@ -25,16 +23,14 @@ def evaluate_iou_matches(
     """
     succeeded = []
     failed = []
-    for i, (pred_pos, pred_sin, pred_cos, pred_width, gt_bbs) in \
-        enumerate(six.moves.zip(pred_poses, pred_sines,
-                                pred_coses, pred_widthes, gt_bbses)):
+    for i, (pred_pos, pred_angle, pred_width, gt_bbs) in \
+        enumerate(six.moves.zip(pred_poses, pred_angles,
+                                pred_widthes, gt_bbses)):
         grasp_position = pred_pos.squeeze()
-        pred_sin = pred_sin.squeeze()
-        pred_cos = pred_cos.squeeze()
+        grasp_angle = pred_angle.squeeze()
         pred_width = pred_width.squeeze()
         gt_bbs = BoundingBoxes.load_from_array(gt_bbs.squeeze())
-        grasp_angle = np.arctan2(pred_sin, pred_cos) / 2.0
-        grasp_width = gaussian(pred_width * 150.0, 1.0,
+        grasp_width = gaussian(pred_width, 1.0,
                                preserve_range=True)
         grasp_position = gaussian(grasp_position,
                                   5.0,
@@ -87,13 +83,12 @@ class GGCNNEvaluator(chainer.training.extensions.Evaluator):
         depths, = in_values
         _, _, _, _, gt_bbses, rgbs = rest_values
 
-        pred_poses, pred_sines, pred_coses, pred_widthes, = out_values
+        pred_poses, pred_angles, pred_widthes, = out_values
 
         # evaluate
         succeeded, failed = evaluate_iou_matches(
             pred_poses,
-            pred_sines,
-            pred_coses,
+            pred_angles,
             pred_widthes,
             gt_bbses,
             min_iou=self.min_iou)
