@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from skimage.filters import gaussian
 
 from chainer_ggcnn.utils import makedirs
+from chainer_ggcnn.utils import BoundingBoxes
 
 
 class GGCNNVisReport(chainer.training.extensions.Evaluator):
@@ -50,6 +51,7 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
             pred_sin = pred_sin.squeeze()
             pred_cos = pred_cos.squeeze()
             pred_width = pred_width.squeeze()
+            gt_bbs = BoundingBoxes.load_from_array(gt_bbs)
             rgb = np.array(rgb.transpose(1, 2, 0), 'i')
             grasp_angle_img = np.arctan2(pred_sin, pred_cos) / 2.0
             plt.clf()
