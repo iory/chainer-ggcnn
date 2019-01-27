@@ -18,9 +18,6 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
     def __init__(self,
                  iterator,
                  target,
-                 joint_index_pairs,
-                 skip_connection_indices=[],
-                 peak_threshold=0.5,
                  file_name='visualizations/iteration=%08d.jpg',
                  shape=(4, 4),
                  copy_latest=True):
@@ -28,9 +25,6 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
         self.file_name = file_name
         self._shape = shape
         self._copy_latest = copy_latest
-        self.skip_connection_indices = skip_connection_indices
-        self.joint_index_pairs = joint_index_pairs
-        self.peak_threshold = peak_threshold
 
     def __call__(self, trainer):
         iterator = self._iterators['main']
