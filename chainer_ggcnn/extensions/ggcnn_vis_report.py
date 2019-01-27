@@ -34,16 +34,17 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
             target.predict, it)
 
         depths, = in_values
-        _, _, _, _, bbs, rgbs = rest_values
+        _, _, _, _, gt_bbses, rgbs = rest_values
 
         pred_poses, pred_sines, pred_coses, pred_widthes, = out_values
 
         # visualize
-        for i, (depth, pred_pos, pred_sin, pred_cos, pred_width, rgb) in \
+        for i, (depth, pred_pos, pred_sin, pred_cos, pred_width, rgb,
+                gt_bbs) in \
             enumerate(
                 six.moves.zip(
                     depths, pred_poses, pred_sines, pred_coses, pred_widthes,
-                    rgbs)):
+                    rgbs, gt_bbses)):
             depth = depth.squeeze()
             pred_pos = pred_pos.squeeze()
             pred_sin = pred_sin.squeeze()
@@ -57,8 +58,16 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
             fig = plt.figure(figsize=(10, 10))
             ax = fig.add_subplot(2, 2, 1)
             ax.imshow(rgb)
+
+            for g in gt_bbs:
+                g.plot(ax, color='g')
+
             ax = fig.add_subplot(2, 2, 2)
             ax.imshow(depth)
+
+            for g in gt_bbs:
+                g.plot(ax, color='g')
+
             ax = fig.add_subplot(2, 2, 3)
             ax.imshow(grasp_position_img, cmap='Reds',
                       vmin=0, vmax=1)
