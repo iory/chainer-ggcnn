@@ -67,3 +67,4 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
                 (trainer.updater.iteration, i))
             makedirs(osp.dirname(file_name), exist_ok=True)
             plt.savefig(file_name)
+            plt.close()
