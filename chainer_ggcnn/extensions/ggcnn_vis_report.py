@@ -18,9 +18,13 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
     def __init__(self,
                  iterator,
                  target,
+                 device=None,
                  file_name='visualizations/iteration=%08d-%08d.jpg',
                  n=100):
-        super(GGCNNVisReport, self).__init__(iterator, target)
+        super(GGCNNVisReport, self).__init__(
+            iteration=iterator,
+            target=target,
+            device=device)
         self.file_name = file_name
         self.n = n
 
