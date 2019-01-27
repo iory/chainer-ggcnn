@@ -39,20 +39,24 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
         pred_poses, pred_sines, pred_coses, pred_widthes, = out_values
 
         # visualize
-        for i, (depth, pred_pos, pred_sin, pred_cos, pred_width) in enumerate(
+        for i, (depth, pred_pos, pred_sin, pred_cos, pred_width, rgb) in \
+            enumerate(
                 six.moves.zip(
-                    depths, pred_poses, pred_sines, pred_coses, pred_widthes)):
+                    depths, pred_poses, pred_sines, pred_coses, pred_widthes,
+                    rgbs)):
             depth = depth.squeeze()
             pred_pos = pred_pos.squeeze()
             pred_sin = pred_sin.squeeze()
             pred_cos = pred_cos.squeeze()
             pred_width = pred_width.squeeze()
+            rgb = rgb.transpose(1, 2, 0)
             grasp_angle_img = np.arctan2(pred_sin, pred_cos) / 2.0
             plt.clf()
             grasp_position_img = gaussian(
                 pred_pos, 5.0, preserve_range=True)
             fig = plt.figure(figsize=(10, 10))
             ax = fig.add_subplot(2, 2, 1)
+            ax.imshow(rgb)
             ax = fig.add_subplot(2, 2, 2)
             ax.imshow(depth)
             ax = fig.add_subplot(2, 2, 3)
