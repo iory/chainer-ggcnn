@@ -32,7 +32,7 @@ def evaluate_iou_matches(
         pred_sin = pred_sin.squeeze()
         pred_cos = pred_cos.squeeze()
         pred_width = pred_width.squeeze()
-        gt_bbs = BoundingBoxes.load_from_array(gt_bbs)
+        gt_bbs = BoundingBoxes.load_from_array(gt_bbs.squeeze())
         grasp_angle = np.arctan2(pred_sin, pred_cos) / 2.0
         grasp_width = gaussian(pred_width * 150.0, 1.0,
                                preserve_range=True)
