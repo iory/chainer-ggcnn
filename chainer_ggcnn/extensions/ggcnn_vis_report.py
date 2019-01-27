@@ -10,6 +10,7 @@ from skimage.filters import gaussian
 
 from chainer_ggcnn.utils import makedirs
 from chainer_ggcnn.utils import BoundingBoxes
+from chainer_ggcnn.utils import detect_grasps
 
 
 class GGCNNVisReport(chainer.training.extensions.Evaluator):
@@ -54,18 +55,32 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
             gt_bbs = BoundingBoxes.load_from_array(gt_bbs)
             rgb = np.array(rgb.transpose(1, 2, 0), 'i')
             grasp_angle_img = np.arctan2(pred_sin, pred_cos) / 2.0
-            plt.clf()
             grasp_position_img = gaussian(
                 pred_pos, 5.0, preserve_range=True)
+            grasp_width_img = gaussian(pred_width, 1.0,
+                                       preserve_range=True)
+            gs = detect_grasps(grasp_position_img,
+                               grasp_angle_img,
+                               width_img=grasp_width_img,
+                               no_grasps=1,
+                               ang_threshold=0)
+
+            plt.clf()
             fig = plt.figure(figsize=(10, 10))
             ax = fig.add_subplot(2, 2, 1)
             ax.imshow(rgb)
+
+            for g in gs:
+                g.plot(ax)
 
             for g in gt_bbs:
                 g.plot(ax, color='g')
 
             ax = fig.add_subplot(2, 2, 2)
             ax.imshow(depth)
+
+            for g in gs:
+                g.plot(ax, color='r')
 
             for g in gt_bbs:
                 g.plot(ax, color='g')
