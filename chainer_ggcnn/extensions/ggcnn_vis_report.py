@@ -18,9 +18,11 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
     def __init__(self,
                  iterator,
                  target,
-                 file_name='visualizations/iteration=%08d-%08d.jpg'):
+                 file_name='visualizations/iteration=%08d-%08d.jpg',
+                 n=100):
         super(GGCNNVisReport, self).__init__(iterator, target)
         self.file_name = file_name
+        self.n = n
 
     def __call__(self, trainer):
         iterator = self._iterators['main']
@@ -99,3 +101,6 @@ class GGCNNVisReport(chainer.training.extensions.Evaluator):
             makedirs(osp.dirname(file_name), exist_ok=True)
             plt.savefig(file_name)
             plt.close()
+
+            if i > self.n:
+                break
