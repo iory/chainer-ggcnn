@@ -12,6 +12,7 @@ install_requires = [
     'matplotlib',
     'scikit-image',
     'tqdm',
+    'gdown',
 ]
 
 setup(
