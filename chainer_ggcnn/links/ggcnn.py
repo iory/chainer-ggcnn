@@ -1,13 +1,30 @@
+import os.path as osp
+
 import chainer
 import chainer.links as L
 import chainer.functions as F
 
+from chainer_ggcnn.datasets import cached_gdown_download
+
 
 class GGCNN(chainer.Chain):
 
-    def __init__(self, use_bn=False):
+    _models = {
+        'cornel': {
+            'url': 'https://drive.google.com/uc?id='
+                   '1rv2MKdHTKf6yC2tZtN5YRIIf-QrYMX9L',
+            'use_bn': True,
+        },
+    }
+
+    def __init__(self, use_bn=False,
+                 pretrained_model=None):
         super(GGCNN, self).__init__()
-        self.use_bn = use_bn
+        if pretrained_model is not None and pretrained_model in self._models:
+            self.use_bn = self._models[pretrained_model]['use_bn']
+        else:
+            self.use_bn = use_bn
+
         with self.init_scope():
             self.conv1 = L.Convolution2D(1, 32, 9, 3, 3)  # (32, 100, 100)
             self.conv2 = L.Convolution2D(32, 16, 5, 2, 2)  # (16, 50, 50)
@@ -36,6 +53,14 @@ class GGCNN(chainer.Chain):
                 self.dbn1 = L.BatchNormalization(8)
                 self.dbn2 = L.BatchNormalization(16)
                 self.dbn3 = L.BatchNormalization(32)
+
+        if pretrained_model is not None:
+            if pretrained_model in self._models:
+                chainer.serializers.load_npz(
+                    cached_gdown_download(
+                        self._models[pretrained_model]['url']), self)
+            elif osp.exists(pretrained_model):
+                chainer.serializers.load_npz(pretrained_model, self)
 
     def predict(self, imgs):
         pred_poses = []
