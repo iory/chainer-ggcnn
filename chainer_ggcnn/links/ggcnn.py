@@ -51,10 +51,9 @@ class GGCNN(chainer.Chain):
             pred_sin = pred_sin[0].data
             pred_cos = pred_cos[0].data
             pred_width = pred_width[0].data
+            pred_angle = self.xp.arctan2(pred_sin, pred_cos) / 2.0
             pred_pos = chainer.backends.cuda.to_cpu(pred_pos)
-            pred_sin = chainer.backends.cuda.to_cpu(pred_sin)
-            pred_cos = chainer.backends.cuda.to_cpu(pred_cos)
-            pred_angle = np.arctan2(pred_sin, pred_cos) / 2.0
+            pred_angle = chainer.backends.cuda.to_cpu(pred_angle)
             pred_width = chainer.backends.cuda.to_cpu(pred_width) * 150.0
             pred_poses.append(pred_pos)
             pred_angles.append(pred_angle)
